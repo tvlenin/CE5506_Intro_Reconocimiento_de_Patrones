@@ -14,4 +14,6 @@ function y=target(W1,W2,X,Y)
     
   # PONGA SU CODIGO AQUÍ
   
+   y = (1/2).*(Y-predict(W1,W2,X))'*(Y-predict(W1,W2,X));
+  
 endfunction;

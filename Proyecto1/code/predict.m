@@ -12,8 +12,8 @@ function y=predict(W1,W2,X)
     
   # PONGA SU CODIGO AQUÍ
 
-  y_u=1./(1+e.^(-(W1*[1,1;X])));
-  y_up=W2*y_u;
+  y_u=1./(1+e.^(-(W1'*[1,1;X]')));
+  y_up=W2'*y_u';
   y=1./(1+e.^(-(y_up)));
   
 endfunction;
