@@ -1,5 +1,5 @@
 function y=target(W1,W2,X,Y)
-    
+  
   # usage target(W1,W2,X,Y)
   # 
   # This function evaluates the sum of squares error for the
@@ -12,7 +12,6 @@ function y=target(W1,W2,X,Y)
   #     equal to 1
   # Y:  labels of the training set
     
-  #           
-  y = 1/2*(Y-predict(W1,W2,X))'(Y-predict(W1,W2,X));
+  y = (1/2).*(Y-predict(W1,W2,X))'*(Y-predict(W1,W2,X));
   
 endfunction;
