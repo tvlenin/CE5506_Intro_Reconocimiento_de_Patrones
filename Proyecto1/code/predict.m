@@ -9,11 +9,9 @@ function y=predict(W1,W2,X)
   # W1: weights matrix between input and hidden layer
   # W2: weights matrix between the hidden and the output layer
   # X:  Input vector, extended at its end with a 1
-    
-  # PONGA SU CODIGO AQUÍ
 
-  y_u = 1./(1+e.^(-(W1'*[1,1; X])));
-  y_up=W2'*y_u;
+  y_u = 1./(1+e.^(-(W1'*[ 1 1; X])));
+  y_up=W2'*[1 1; y_u];
   y=1./(1+e.^(-(y_up)));
   
 endfunction;
