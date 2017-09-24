@@ -11,7 +11,9 @@ function y=target(W1,W2,X,Y)
   # X:  training set holding on the rows the input data, plus a final column 
   #     equal to 1
   # Y:  labels of the training set
-    
-  y = (1/2).*(Y-predict(W1,W2,X))'*(Y-predict(W1,W2,X));
+  
+  D = (predict(W1,W2,X)-Y);
+  y = 0.5*sum(D.*D,1); 
+#  y = (1/2).*(Y-predict(W1,W2,X))'*(Y-predict(W1,W2,X));
   
 endfunction;
