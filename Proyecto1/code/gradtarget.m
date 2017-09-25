@@ -9,13 +9,22 @@ function [gW1, gW2]=gradtarget(W1,W2,X,Y)
   # X:  training set holding on the rows the input data, plus a final column 
   #     equal to 1
   # Y:  labels of the training set
-  g1=ones(1,1);
+  
+  S = sum((predict(W1,W2,X)-Y),1);
+  W2a=W2;
+  W2a(:,1)=[];
+  act=(1./(1+e.^(-W1*[ones(rows(X),1) X]')));
+  g1 = repmat(S*W2a,columns(W1),1);
+  g1=(g1*act*(1-act'))'# *[ones(rows(X),1) X]' Esta es la multiplicacion que no se como hacer 
+  #Need to multiply this matrix (Same size of W1, neurons X 3)
+  #[ A B C]  * [1 X Y]
+  
   
   D = sum((predict(W1,W2,X)-Y),1);
   pre=repmat(D,rows(X),1);
-  H1=(1./(1+e.^(-W1*[ones(rows(X),1) X]')))
+  H1=(1./(1+e.^(-W1*[ones(rows(X),1) X]')));
   r=1-predict(W1,W2,X);
-  g2=-(pre.*r.*(1-r))'*(H1)'
+  g2=-(pre.*r.*(1-r))'*(H1)';
   
   
   
