@@ -11,7 +11,7 @@ function y=predict(W1,W2,X)
   # X:  Input vector, extended at its end with a 1
   
   y_u=1./(1+e.^(-W1*[ones(rows(X),1) X]'));
-  y_up=(W2*[ones(1,11); y_u]);
+  y_up=(W2*[ones(1,rows(X)); y_u]);
   y=1./(1+e.^(-(y_up')));
   
 endfunction;
