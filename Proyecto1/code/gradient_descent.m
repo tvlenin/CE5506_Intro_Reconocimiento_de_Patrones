@@ -30,4 +30,8 @@ function res = gradJ(tc,fw1,cw1,fw2,cw2,X,Y)
   [tW1,tW2] = unpackweights(tc,fw1,cw1,fw2,cw2);
   [gW1,gW2] = gradtarget(tW1,tW2,X,Y);
   res = packweights(gW1,gW2);
+  size(tW1)
+  size(tW2)
+  size(gW1)
+  size(gW2)
 endfunction

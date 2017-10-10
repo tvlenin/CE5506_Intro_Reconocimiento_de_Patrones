@@ -20,16 +20,15 @@ function [gW1, gW2]=gradtarget(W1,W2,X,Y)
   for i=1:rows(g1)
     a(i,:)=sum(repmat( g1(1,:),11,1).*[ones(rows(X),1) X]);
   endfor
-  gW1=a
+  gW1=a;
   
   D = sum((predict(W1,W2,X)-Y),1);
   pre=repmat(D,rows(X),1);
   H1=(1./(1+e.^(-W1*[ones(rows(X),1) X]')));
-  r=1-predict(W1,W2,X);
-  gW2=-(pre.*r.*(1-r))'*(H1)';
-  gW2=gW2';
-  
-  
+  r=predict(W1,W2,X);
+  gW2=-(pre.*r.*(1-r))';
+  gW2= [gW2*(H1)'];
+  gW2= [zeros(3,1) gW2]; 
   
   
   
