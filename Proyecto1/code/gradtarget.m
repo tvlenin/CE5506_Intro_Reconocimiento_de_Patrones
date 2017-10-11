@@ -18,7 +18,7 @@ function [gW1, gW2]=gradtarget(W1,W2,X,Y)
   g1=(g1*act*(1-act'))'; 
   #Need to multiply this matrix (Same size of W1, neurons X 3)  
   for i=1:rows(g1)
-    a(i,:)=sum(repmat( g1(1,:),11,1).*[ones(rows(X),1) X]);
+    a(i,:)=sum(repmat( g1(1,:),rows(X),1).*[ones(rows(X),1) X]);
   endfor
   gW1=a;
   
