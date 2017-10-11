@@ -22,7 +22,7 @@ function [gradW1, gradW2]=gradtarget(W1,W2,X,Y)
   for i=1:m,
     delta3 = -(predict(W1,W2,X(i,:)) - Y(i,:)) .* [fprime(z3(:,i))]; 
     delta2= W2s'*delta3(:,1) .* [fprime(z2(:,i))];
-    gradW2 = gradW2 + [delta3(:,1)]*[ones(1, 1); a2(:,i)]';
+    gradW2 = gradW2 + [delta3(:,1)]*[1; a2(:,i)]';
     gradW1 = [gradW1] + delta2*[0 X(i,:)]; 
   end;
   
