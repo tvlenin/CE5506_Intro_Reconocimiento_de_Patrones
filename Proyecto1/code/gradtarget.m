@@ -1,4 +1,4 @@
-function [gW1, gW2]=gradtarget(W1,W2,X,Y)
+function [gradW1, gradW2]=gradtarget(W1,W2,X,Y)
 
   # usage gradtarget(W1,W2,X,Y)
   # 
@@ -9,35 +9,51 @@ function [gW1, gW2]=gradtarget(W1,W2,X,Y)
   # X:  training set holding on the rows the input data, plus a final column 
   #     equal to 1
   # Y:  labels of the training set
-  
-  S = sum((predict(W1,W2,X)-Y),1);
-  W2a=W2;
-  W2a(:,1)=[];
-  act=(1./(1+e.^(-W1*[ones(rows(X),1) X]')));
-  g1 = repmat(S*W2a,columns(W1),1);
-  g1=(g1*act*(1-act'))'; 
-  #Need to multiply this matrix (Same size of W1, neurons X 3)  
-  for i=1:rows(g1)
-    a(i,:)=sum(repmat( g1(1,:),rows(X),1).*[ones(rows(X),1) X]);
-  endfor
-  gW1=a;
-  
-  D = sum((predict(W1,W2,X)-Y),1);
-  pre=repmat(D,rows(X),1);
-  H1=(1./(1+e.^(-W1*[ones(rows(X),1) X]')));
-  r=predict(W1,W2,X);
-  gW2=-(pre.*r.*(1-r))';
-  gW2= [gW2*(H1)'];
-  gW2= [zeros(3,1) gW2]; 
-  
-  
-  
-  #D = sum((predict(W1,W2,X)-Y),1);
-  #g=(1./(1+e.^(-W1*[ones(rows(X),1) X]')));
-  
-  #g1=g'*(1-g)*([ones(rows(X),1) X]);
-  #gW1 = -((((repmat(D,rows(X),1))'*predict(W1,W2,X))*(1-predict(W1,W2,X))')'*W2)'*(g1);
 
-  #gW2 = -((((repmat(D,rows(X),1))'*predict(W1,W2,X))*(1-predict(W1,W2,X))')*[ones(1,rows(X)); g]')';
+  m=rows(X);  
+  z2 = W1 * [ones(1, columns(X)); X];
+  a2 = f(z2);
+  z3 = W2 * [ones(1,columns(X)); a2];
+  h = f(z3);
+  gradW1 = zeros(size(W1));
+  gradW2 = zeros(size(W2)); 
+  W2s=W2;
+  W2s(:,1) = [];
+  for i=1:m,
+    delta3 = -(predict(W1,W2,X(i,:)) - Y(i,:)) .* fprime(z3(:,i)); 
+    delta2= W2s'*delta3(:,i) .* [fprime(z2(:,i))];
+    gradW2 = gradW2 + delta3*[0; a2(i,:)'];
+    gradW1 = [gradW1] + delta2*[0 X(i,:)]; 
+  end;
+  
+  
+#  gradW1 = zeros(size(W1));
+#gradW2 = zeros(size(W2)); 
+#for i=1:m,
+#  delta3 = -(y(:,i) - h(:,i)) .* fprime(z3(:,i)); 
+#  delta2 = W2'*delta3(:,i) .* fprime(z2(:,i));
+# 
+#  gradW2 = gradW2 + delta3*a2(:,i)';
+#  gradW1 = gradW1 + delta2*a1(:,i)'; 
+#end;
 
+endfunction;
+
+function output = f(z)
+  output = 1./(1+exp(-z));
+end
+function output = fprime(z)
+  output = (1./(1+exp(-z))).*(1-(1./(1+exp(-z))));
+end
+
+function [gradW1, gradW2]=gradtarget2(W1,W2,X,Y)
+  gradW1 = zeros(size(W1));
+  gradW2 = zeros(size(W2)); 
+  for i=1:m,
+    delta3 = -(y(:,i) - h(:,i)) .* fprime(z3(:,i)); 
+    delta2 = W2'*delta3(:,i) .* fprime(z2(:,i));
+   
+    gradW2 = gradW2 + delta3*a2(:,i)';
+    gradW1 = gradW1 + delta2*a1(:,i)'; 
+  end;
 endfunction;
