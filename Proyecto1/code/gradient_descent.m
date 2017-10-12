@@ -4,13 +4,13 @@ function [nW1,nW2] = gradient_descent(W1,W2,numSamples)
     tw2 = size(W2);
     weight = packweights(W1,W2);
     ts=weight;
-    alpha = 0.05;
+    alpha = 0.001;
     for i=[1:1000] # max 1000 iterations
     tc = ts(rows(ts),:); # Current position 
     gn = gradJ(tc,tw1(:,1),tw1(:,2),tw2(:,1),tw2(:,2),X,Y);  # Gradient at current position
     tn = tc - alpha * gn;# Next position
     ts = [ts;tn];
-    if (norm(tc-tn)<0.001) 
+    if(norm(tc-tn)<0.001) 
       disp("Convergio en:");
       i
       break; 

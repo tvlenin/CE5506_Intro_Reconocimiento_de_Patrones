@@ -1,5 +1,5 @@
 #Get information about the confusion matrix
-    function [conf, sens, pre]=data_evaluation(W1,W2,X,Y)
+function [conf, sens, pre]=data_evaluation(W1,W2,X,Y)
   
   pre_y = predict(W1,W2,X);
   conf=confusionmat3(Y,pre_y);
