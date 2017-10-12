@@ -1,13 +1,13 @@
 function [] = main()
   alpha=0.005;
   numSamples=5;
-  numNeuronsL1=7;
+  numNeuronsL1=14;
   numNeuronsL2=3;
-  W1=rand(numNeuronsL1,3);
-  W2=rand(numNeuronsL2,numNeuronsL1+1);
+  fW1=rand(numNeuronsL1,3);
+  fW2=rand(numNeuronsL2,numNeuronsL1+1);  
   
   #Training
-  #[W1,W2] = gradient_descent(W1,W2,50);
+  [W1,W2] = gradient_descent(fW1,fW2,30);
 
   #Predict 
   axis=-1:(1/256):1;
@@ -26,7 +26,7 @@ function [] = main()
   hold on;
 
   #Shows metrics
-  
+  [conf, sens, pre]=data_evaluation(W1,W2,X,Y);
   
 
   

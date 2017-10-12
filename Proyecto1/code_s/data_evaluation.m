@@ -56,7 +56,7 @@ endfunction;
 # Not used
 function [ret] = confusionmat2(v1, v2)
     values = union(unique(v1), unique(v2));
-    size(values);
+    size(values)
     ret = zeros(size(values), size(values));
     for i = 1:size(v1)
        i1 = find(values == v1(i));
