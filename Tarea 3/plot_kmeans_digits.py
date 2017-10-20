@@ -44,6 +44,7 @@ data = scale(digits.data)
 
 n_samples, n_features = data.shape
 n_digits = len(np.unique(digits.target))
+#n_digits=5
 labels = digits.target
 
 sample_size = 300
@@ -101,6 +102,27 @@ xx, yy = np.meshgrid(np.arange(x_min, x_max, h), np.arange(y_min, y_max, h))
 
 # Obtain labels for each point in mesh. Use last trained model.
 Z = kmeans.predict(np.c_[xx.ravel(), yy.ravel()])
+
+
+
+# Figure size in inches
+fig = plt.figure(2)
+# Add title
+fig.suptitle('Cluster Center Images', fontsize=14, fontweight='bold')
+# For all labels (0-9)
+for i in range(10):
+    # Initialize subplots in a grid of 2X5, at i+1th position
+    ax = fig.add_subplot(2, 5, 1 + i)
+    # Display images
+    print(kmeans.cluster_centers_)
+    ax.imshow(kmeans.cluster_centers_[i].reshape((8, 8)), cmap=plt.cm.binary)
+    # Don't show the axes
+    plt.axis('off')
+
+# Show the plot
+plt.show()
+
+
 
 # Put the result into a color plot
 Z = Z.reshape(xx.shape)
