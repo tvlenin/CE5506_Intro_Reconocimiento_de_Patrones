@@ -46,7 +46,7 @@ data = digits.data
 n_samples, n_features = data.shape
 #n_digits = len(np.unique(digits.target))
 labels = digits.target
-n_digits=3
+n_digits=20
 sample_size = 300
 
 print("n_digits: %d, \t n_samples %d, \t n_features %d"
@@ -115,7 +115,7 @@ print(kmeans.cluster_centers_.shape)
 print(kmeans_plus.cluster_centers_.shape)
 for i in range(n_digits):
     # Initialize subplots in a grid of 2X5, at i+1th position
-    ax = fig.add_subplot(2, 5, 1 + i)
+    ax = fig.add_subplot(4, 5, 1 + i)
     ax.imshow(kmeans_plus.cluster_centers_[i].reshape((8, 8)), cmap=plt.cm.binary)
     plt.axis('off')
 # Show the plot
