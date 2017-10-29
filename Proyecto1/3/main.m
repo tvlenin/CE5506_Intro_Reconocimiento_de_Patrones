@@ -16,7 +16,7 @@ function [] = main()
   X2=reshape(X2,513*513,1);  
   X=[X2 X1];
   
-  Y=predict(W1,W2,X);
+  Y=predict(W1,W2,X)';
 
   pix= reshape(Y,513,513,3);
   
