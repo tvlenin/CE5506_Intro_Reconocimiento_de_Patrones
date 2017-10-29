@@ -90,7 +90,7 @@ print(82 * '_')
 
 reduced_data = PCA(n_components=2).fit_transform(data)
 kmeans = KMeans(init='k-means++', n_clusters=n_digits, n_init=10)
-kmeans.fit(reduced_data)    # Old line: kmeans.fit(reduced_data)
+kmeans.fit(data)    # Old line: kmeans.fit(reduced_data)
 
 # Step size of the mesh. Decrease to increase the quality of the VQ.
 h = .02     # point in the mesh [x_min, x_max]x[y_min, y_max].
@@ -101,18 +101,10 @@ y_min, y_max = reduced_data[:, 1].min() - 1, reduced_data[:, 1].max() + 1
 xx, yy = np.meshgrid(np.arange(x_min, x_max, h), np.arange(y_min, y_max, h))
 #print(xx.shape)
 
-''' 
-Linea 93 debe usar data que no tiene PCA,
-No puedo crear un mesh grid para 64D
-que es el que necesitaria para hacer predict() en la linea 114
-'''
-GridSize = [64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64]
-allG = [np.arange(x_min,x_max, G) for G in GridSize]
-out = np.meshgrid(*allG)
-
 # Obtain labels for each point in mesh. Use last trained model.
-Z = kmeans.predict(out)
-#Z = kmeans.predict(np.c_[xx.ravel(), yy.ravel()])
+
+kmeans.fit(reduced_data)
+Z = kmeans.predict(np.c_[xx.ravel(), yy.ravel()])
 
 # Figure size in inches
 fig = plt.figure(2)
@@ -130,10 +122,10 @@ plt.show()
 
 
 # Put the result into a color plot
-#Z = Z.reshape(xx.shape)
+Z = Z.reshape(xx.shape)
 plt.figure(1)
 plt.clf()
-print(Z)
+#print(Z)
 plt.imshow(Z, interpolation='nearest',
            extent=(xx.min(), xx.max(), yy.min(), yy.max()),
            cmap=plt.cm.Paired,
