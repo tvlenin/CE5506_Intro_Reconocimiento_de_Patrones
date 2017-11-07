@@ -30,6 +30,7 @@ print(__doc__)
 from time import time
 import numpy as np
 import matplotlib.pyplot as plt
+import tensorflow as tf
 
 from sklearn import metrics
 from sklearn.cluster import KMeans
@@ -100,6 +101,17 @@ x_min, x_max = reduced_data[:, 0].min() - 1, reduced_data[:, 0].max() + 1
 y_min, y_max = reduced_data[:, 1].min() - 1, reduced_data[:, 1].max() + 1
 xx, yy = np.meshgrid(np.arange(x_min, x_max, h), np.arange(y_min, y_max, h))
 #print(xx.shape)
+
+'''
+Linea 93 debe usar data que no tiene PCA,
+No puedo crear un mesh grid para 64D
+que es el que necesitaria para hacer predict() en la linea 114
+'''
+#GridSize = [64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64]
+GridSize = [64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64,64]
+
+allG = [np.arange(x_min,x_max, G) for G in GridSize]
+out = np.meshgrid(*allG)
 
 # Obtain labels for each point in mesh. Use last trained model.
 
