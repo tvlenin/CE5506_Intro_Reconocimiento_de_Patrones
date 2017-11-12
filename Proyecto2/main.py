@@ -58,7 +58,7 @@ for i in audios_size:
     #print(clf.predict(fft_data[actual:actual+i]))
     b = np.zeros(160)
     b[0:i] = clf.predict(fft_data[actual:actual+i])
-    #print(b)
+    #print(b)#aqui veo lo que tira el predict de kmeans de los datos de entrenamiento
     kkk.append(b)
     actual = i
     #cont += 1
@@ -102,9 +102,9 @@ for i in range(300):
 #kk.append(b)
 
 #y_pred = svmm.fit(kkk, data_label).predict(kkk[73].reshape(1,-1))
-#for i in range (300):
+for i in range (300):
 	#y_pred = svmm.fit(kkk, data_label).predict(kk[i].reshape(1,-1))
-	#print(kk[i])
+	print(kk[i])#aqui veo lo que tira el predict de kmeans de los datos de prueba
 
 
 print("Bye")
