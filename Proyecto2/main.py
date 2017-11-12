@@ -70,7 +70,7 @@ print(data_label.shape)
 svmm = svm.SVC(kernel='rbf', gamma = 10)
 svmm.fit(kkk, data_label)
 ##**********************************a partir de aqui predict con mi audio***************************########
-a1 = libwav.read('/home/tvlenin/Desktop/1_Lenin_0.wav',mmap=False)[1]
+#a1 = libwav.read('/home/tvlenin/Desktop/1_Lenin_0.wav',mmap=False)[1]
 #print(a1.shape)
 #a1 = preprocessing.normalize(a1.reshape(-1,1), norm='l2')
 #print(a1.shape)
