@@ -1,26 +1,20 @@
 import pickle
-import scipy.io.wavfile as libwav
-import numpy as np
-from sklearn import preprocessing
-from sklearn import metrics
-from sklearn.cluster import KMeans
-from sklearn.datasets import load_digits
-from sklearn.decomposition import PCA
-from sklearn.preprocessing import scale
-from sklearn import svm
-
 import fft
 import func
+import numpy as np
+import scipy.io.wavfile as libwav
+from sklearn.cluster import KMeans
+from sklearn.naive_bayes import GaussianNB #Naive bayes
+
 np.random.seed(42)
 
-#---------------variables---------------
-#Samples for each FFT
-FFT_length = 256 #for each size
+#------------------------------------Algorithm parameters-----------------------------------------------
+FFT_length = 256 #Samples for each FFT
 n_digits = 26 #For kmeans
 
-# 150 samples for each number, from three different people
-#dataset[0-1499] -> 150 1's -> 150 2's -> ..... -> 150 9's
-#dataset[n][0-1] 0-> label  1-> array normalized data
+''' 150 samples for each number, from three different people
+dataset[0-1499] -> 150 1's -> 150 2's -> ..... -> 150 9's
+dataset[n][0-1] 0-> label  1-> array normalized data'''
 print("Opening file...")
 with open('dataset.dat', 'rb') as data:
    dataset = pickle.load(data)
@@ -34,45 +28,40 @@ for i in range(0,1351,150):
 	for j in range(120,149):
 		test_dataset.append(dataset[i+j])
 
-# Apply FFT with overlapping samples
+#-----------------------------------FFT with overlapping samples-----------------------------------------------
 print("Aplying FFT...")
 [fft_data, audios_size, data_label] = fft.fixed_size_fft(FFT_length, train_dataset)
 
-#K means clustering
+#------------------------------------K means clustering--------------------------------------------------------
 print("Aplying K means")
-clf = KMeans(init='k-means++', n_clusters=n_digits, n_init=10).fit(fft_data)
+#clf = KMeans(init='k-means++', n_clusters=n_digits, n_init=10).fit(fft_data)
 
-
+#-----------------------------------File write/read k-means----------------------------------------------------
 # now you can save it to a file
 #with open('kmeans.pkl', 'wb') as f:
 #    pickle.dump(clf, f)
 
 # and later you can load it
-#with open('kmeans.pkl', 'rb') as f:
-#    clf = pickle.load(f)
+with open('kmeans.pkl', 'rb') as f:
+    clf = pickle.load(f)
+
+
+#-----------------------------------Naive Bayes----------------------------------------------------
 actual = 0
-cont = 0
 kkk = []
 for i in audios_size:
     #print(clf.predict(fft_data[actual:actual+i]))
     b = np.zeros(160)
     b[0:i] = clf.predict(fft_data[actual:actual+i])
-
     kkk.append(b)
     actual = i
-    #cont += 1
 kkk = np.array(kkk)
 data_label = np.array(data_label)
-print(kkk.shape)
-print(data_label.shape)
 
-svmm = svm.SVC(kernel='rbf', gamma = 0.006, C=1)
-svmm.fit(kkk, data_label)
-##**********************************a partir de aqui predict con mi audio***************************########
-#a1 = libwav.read('/home/tvlenin/Desktop/1_Lenin_0.wav',mmap=False)[1]
-#print(a1.shape)
-#a1 = preprocessing.normalize(a1.reshape(-1,1), norm='l2')
-#print(a1.shape)
+gnb = GaussianNB()
+naive_bayes = gnb.fit(kkk,data_label)
+
+
 kk = []
 testAudio_total = []
 testAudio = []
@@ -85,37 +74,30 @@ for data_set in test_dataset:
     for i in range(FFT_length, data_set[1].shape[0]-1, FFT_length):
     	testAudio += [np.absolute(np.fft.fft([data_set[1][(i-FFT_length):(i+FFT_length)]]))[0][0:64]]
     testAudio_total += [testAudio]
-#print(testAudio_total[0])
-#print("************************************************************************************************")
-#print(testAudio_total[1])
 
 for i in range(0,290,10):
-    #print(clf.predict(fft_data[actual:actual+i]))
     b = np.zeros(160)
-    #testAudio_test = np.array(testAudio[i])
-    #print(len(testAudio_total[i]))
-
     b[0:len(testAudio_total[i])] = clf.predict(testAudio_total[i])
     kk.append(b)
 
-#testAudio = np.array(testAudio)
-#print(testAudio.shape[0])
-#b[0:testAudio.shape[0]] = clf.predict(testAudio.reshape(testAudio.shape[0],testAudio.shape[1]))
-##*************************************************************************************************########
-#print(b)
-#print(kkk[73])
-#kk.append(b)
-
-#y_pred = svmm.fit(kkk, data_label).predict(kkk[73].reshape(1,-1))
 
 for i in range (29):
-	y_pred = svmm.fit(kkk, data_label).predict(kk[i].reshape(1,-1))
+	y_pred = naive_bayes.predict(kk[i].reshape(1,-1))
 	print(y_pred)
-	print(kk[i])
-    
-#y_pred = svmm.fit(kkk, data_label).predict(kkk[150].reshape(1,-1))
-#print(y_pred)
-#y_pred = svmm.fit(kkk, data_label).predict(kkk[300].reshape(1,-1))
-#print(y_pred)
+    #print(kk[i])
 
-print("Bye")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
