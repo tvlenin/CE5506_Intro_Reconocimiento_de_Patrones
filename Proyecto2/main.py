@@ -15,8 +15,8 @@ np.random.seed(42)
 
 #---------------variables---------------
 #Samples for each FFT
-FFT_length = 64 #for each size
-n_digits = 100 #For kmeans
+FFT_length = 256 #for each size
+n_digits = 26 #For kmeans
 
 # 150 samples for each number, from three different people
 #dataset[0-1499] -> 150 1's -> 150 2's -> ..... -> 150 9's
@@ -66,7 +66,7 @@ data_label = np.array(data_label)
 print(kkk.shape)
 print(data_label.shape)
 
-svmm = svm.SVC(kernel='rbf', gamma = 0.1, C=1)
+svmm = svm.SVC(kernel='rbf', gamma = 0.006, C=1)
 svmm.fit(kkk, data_label)
 ##**********************************a partir de aqui predict con mi audio***************************########
 #a1 = libwav.read('/home/tvlenin/Desktop/1_Lenin_0.wav',mmap=False)[1]
