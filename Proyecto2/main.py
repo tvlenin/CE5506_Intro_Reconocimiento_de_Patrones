@@ -58,7 +58,6 @@ for i in audios_size:
     #print(clf.predict(fft_data[actual:actual+i]))
     b = np.zeros(160)
     b[0:i] = clf.predict(fft_data[actual:actual+i])
-    #print(b)
     kkk.append(b)
     actual = i
     #cont += 1
@@ -75,22 +74,28 @@ a1 = libwav.read('/home/tvlenin/Desktop/1_Lenin_0.wav',mmap=False)[1]
 #a1 = preprocessing.normalize(a1.reshape(-1,1), norm='l2')
 #print(a1.shape)
 kk = []
+testAudio_total = []
 testAudio = []
 data_size1 = []
 data_label1 = []
 for data_set in test_dataset:
-	data_size1 += [(data_set[1].shape[0]-1)/128]
-	data_label1 += [data_set[0]]
-	for i in range(FFT_length, data_set[1].shape[0]-1, FFT_length):
-		testAudio += [np.absolute(np.fft.fft([data_set[1][(i-FFT_length):(i+FFT_length)]]))[0][0:64]]
+    testAudio = []
+    data_size1 += [(data_set[1].shape[0]-1)/128]
+    data_label1 += [data_set[0]]
+    for i in range(FFT_length, data_set[1].shape[0]-1, FFT_length):
+    	testAudio += [np.absolute(np.fft.fft([data_set[1][(i-FFT_length):(i+FFT_length)]]))[0][0:64]]
+    testAudio_total += [testAudio]
+#print(testAudio_total[0])
+#print("************************************************************************************************")
+#print(testAudio_total[1])
 
-
-for i in range(300):
+for i in range(290):
     #print(clf.predict(fft_data[actual:actual+i]))
     b = np.zeros(160)
-    testAudio_test = np.array(testAudio[i])
-    #print(testAudio_test)
-    b[0:testAudio_test.shape[0]] = clf.predict(testAudio_test.reshape(1,testAudio_test.shape[0]))
+    #testAudio_test = np.array(testAudio[i])
+    #print(len(testAudio_total[i]))
+
+    b[0:len(testAudio_total[i])] = clf.predict(testAudio_total[i])
     kk.append(b)
 
 #testAudio = np.array(testAudio)
@@ -102,9 +107,9 @@ for i in range(300):
 #kk.append(b)
 
 #y_pred = svmm.fit(kkk, data_label).predict(kkk[73].reshape(1,-1))
-#for i in range (300):
+#for i in range (290):
 	#y_pred = svmm.fit(kkk, data_label).predict(kk[i].reshape(1,-1))
-	#print(kk[i])
+	#print(y_pred)
 
 
 print("Bye")
