@@ -36,7 +36,7 @@ print("Aplying FFT...")
 
 #K means clustering
 print("Aplying K means")
-clf = KMeans(init='k-means++', n_clusters=n_digits, n_init=10).fit(fft_data)
+#clf = KMeans(init='k-means++', n_clusters=n_digits, n_init=10).fit(fft_data)
 
 
 # now you can save it to a file
@@ -44,8 +44,8 @@ clf = KMeans(init='k-means++', n_clusters=n_digits, n_init=10).fit(fft_data)
 #    pickle.dump(clf, f)
 
 # and later you can load it
-#with open('kmeans.pkl', 'rb') as f:
-#    clf = pickle.load(f)
+with open('kmeans.pkl', 'rb') as f:
+    clf = pickle.load(f)
 actual = 0
 cont = 0
 kkk = []
@@ -64,7 +64,7 @@ for i in audios_size:
 kkk = np.array(kkk)
 data_label = np.array(data_label)
 
-print(kkk)
+#print(type(kkk[0]))
 #print(data_label.shape)
 
 print("Naive Bayes...")
@@ -74,14 +74,15 @@ print("Naive Bayes...")
 #bayes_result = gnb.fit(kkk, data_label).predict(kkk)
 
 #print(bayes_result.shape)
-'''
-svmm = svm.SVC(kernel='rbf', gamma = 0.006, C=1)
+
+svmm = svm.SVC(kernel='rbf', gamma = 0.1, C=1)
 svmm.fit(kkk, data_label)
 ##**********************************a partir de aqui predict con mi audio***************************########
 #a1 = libwav.read('/home/tvlenin/Desktop/1_Lenin_0.wav',mmap=False)[1]
 #print(a1.shape)
 #a1 = preprocessing.normalize(a1.reshape(-1,1), norm='l2')
 #print(a1.shape)
+
 kk = []
 testAudio_total = []
 testAudio = []
@@ -98,14 +99,15 @@ for data_set in test_dataset:
 #print("************************************************************************************************")
 #print(testAudio_total[1])
 
-for i in range(0,290,10):
-    #print(clf.predict(fft_data[actual:actual+i]))
-    b = np.zeros(160)
-    #testAudio_test = np.array(testAudio[i])
-    #print(len(testAudio_total[i]))
-
-    b[0:len(testAudio_total[i])] = clf.predict(testAudio_total[i])
+for i in range(290):
+    #b = np.zeros(160)
+    #b[0:len(testAudio_total[i])] = clf.predict(testAudio_total[i])
+    #kk.append(b)
+    b = naive_bayes.predict(n_digits,clf.predict(testAudio_total[i]))
+    #print(kk.shape)
+    #kkk.append(kk.reshape(kk.shape[0],1))
     kk.append(b)
+    #actual = i
 
 #testAudio = np.array(testAudio)
 #print(testAudio.shape[0])
@@ -116,16 +118,17 @@ for i in range(0,290,10):
 #kk.append(b)
 
 #y_pred = svmm.fit(kkk, data_label).predict(kkk[73].reshape(1,-1))
-
-for i in range (29):
-	y_pred = svmm.fit(kkk, data_label).predict(kk[i].reshape(1,-1))
-	print(y_pred)
-	print(kk[i])
-
+conta = 0
+for i in range (290):
+    y_pred = svmm.fit(kkk, data_label).predict(kk[i].reshape(1,-1))
+    if(y_pred[0] == data_label1[i]):
+        conta += 1
+    #print(y_pred)
+	#print(kk[i])
+print(100*conta/290)
 #y_pred = svmm.fit(kkk, data_label).predict(kkk[150].reshape(1,-1))
 #print(y_pred)
 #y_pred = svmm.fit(kkk, data_label).predict(kkk[300].reshape(1,-1))
 #print(y_pred)
 
 print("Bye")
-'''
