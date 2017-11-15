@@ -4,7 +4,7 @@ import numpy as np
 from sklearn.cluster import KMeans
 from sklearn import svm
 from sklearn.naive_bayes import GaussianNB
-
+import naive_bayes
 import fft
 import func
 np.random.seed(42)
@@ -52,10 +52,10 @@ kkk = []
 
 for i in audios_size:
     #print(clf.predict(fft_data[actual:actual+i]))
-    b = np.zeros(160)
-    b[0:i] = clf.predict(fft_data[actual:actual+i])
+    #b = np.zeros(160)
+    #b[0:i] = clf.predict(fft_data[actual:actual+i])
     #print(clf.predict(fft_data[actual:actual+i]))
-    #kk = clf.predict(fft_data[actual:actual+i])
+    b = naive_bayes.predict(n_digits,clf.predict(fft_data[actual:actual+i]))
     #print(kk.shape)
     #kkk.append(kk.reshape(kk.shape[0],1))
     kkk.append(b)
@@ -68,12 +68,12 @@ data_label = np.array(data_label)
 #print(data_label.shape)
 
 print("Naive Bayes...")
-gnb = GaussianNB()
+#gnb = GaussianNB()
 #print(kkk)
 
-bayes_result = gnb.fit(kkk, data_label).predict(kkk)
+#bayes_result = gnb.fit(kkk, data_label).predict(kkk)
 
-print(bayes_result.shape)
+#print(bayes_result.shape)
 '''
 svmm = svm.SVC(kernel='rbf', gamma = 0.006, C=1)
 svmm.fit(kkk, data_label)
