@@ -36,7 +36,7 @@ print("Aplying FFT...")
 
 #K means clustering
 print("Aplying K means")
-#clf = KMeans(init='k-means++', n_clusters=n_digits, n_init=10).fit(fft_data)
+clf = KMeans(init='k-means++', n_clusters=n_digits, n_init=10).fit(fft_data)
 
 
 # now you can save it to a file
@@ -44,8 +44,8 @@ print("Aplying K means")
 #    pickle.dump(clf, f)
 
 # and later you can load it
-with open('kmeans.pkl', 'rb') as f:
-    clf = pickle.load(f)
+#with open('kmeans.pkl', 'rb') as f:
+#    clf = pickle.load(f)
 actual = 0
 cont = 0
 kkk = []
@@ -64,7 +64,7 @@ for i in audios_size:
 kkk = np.array(kkk)
 data_label = np.array(data_label)
 
-#print(kkk.shape)
+print(kkk)
 #print(data_label.shape)
 
 print("Naive Bayes...")
