@@ -1,5 +1,7 @@
+import numpy as np
+
 def predict(n_class, array):
-    ans=[0]*(n_class)
+    ans=np.zeros(n_class)
     for i in range(0,len(array),1):
-        ans[array[i]]=1
+        ans[int(array[i])]=1
     return ans
