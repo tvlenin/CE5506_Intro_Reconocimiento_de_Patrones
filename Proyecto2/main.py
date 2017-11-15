@@ -1,13 +1,9 @@
 import pickle
 import scipy.io.wavfile as libwav
 import numpy as np
-from sklearn import preprocessing
-from sklearn import metrics
 from sklearn.cluster import KMeans
-from sklearn.datasets import load_digits
-from sklearn.decomposition import PCA
-from sklearn.preprocessing import scale
 from sklearn import svm
+from sklearn.naive_bayes import GaussianNB
 
 import fft
 import func
@@ -15,9 +11,8 @@ np.random.seed(42)
 
 #---------------variables---------------
 #Samples for each FFT
-FFT_length = 128 #for each size
-FFT_size = 64
-n_digits = 15 #For kmeans
+FFT_length = 256 #for each size
+n_digits = 26 #For kmeans
 
 # 150 samples for each number, from three different people
 #dataset[0-1499] -> 150 1's -> 150 2's -> ..... -> 150 9's
@@ -41,7 +36,7 @@ print("Aplying FFT...")
 
 #K means clustering
 print("Aplying K means")
-clf = KMeans(init='k-means++', n_clusters=n_digits, n_init=10).fit(fft_data)
+#clf = KMeans(init='k-means++', n_clusters=n_digits, n_init=10).fit(fft_data)
 
 
 # now you can save it to a file
@@ -49,25 +44,38 @@ clf = KMeans(init='k-means++', n_clusters=n_digits, n_init=10).fit(fft_data)
 #    pickle.dump(clf, f)
 
 # and later you can load it
-#with open('kmeans.pkl', 'rb') as f:
-#    clf = pickle.load(f)
+with open('kmeans.pkl', 'rb') as f:
+    clf = pickle.load(f)
 actual = 0
 cont = 0
 kkk = []
+
 for i in audios_size:
     #print(clf.predict(fft_data[actual:actual+i]))
     b = np.zeros(160)
     b[0:i] = clf.predict(fft_data[actual:actual+i])
-
+    #print(clf.predict(fft_data[actual:actual+i]))
+    #kk = clf.predict(fft_data[actual:actual+i])
+    #print(kk.shape)
+    #kkk.append(kk.reshape(kk.shape[0],1))
     kkk.append(b)
     actual = i
-    #cont += 1
+
 kkk = np.array(kkk)
 data_label = np.array(data_label)
-print(kkk.shape)
-print(data_label.shape)
 
-svmm = svm.SVC(kernel='rbf', gamma = 0.01)
+#print(kkk.shape)
+#print(data_label.shape)
+
+print("Naive Bayes...")
+gnb = GaussianNB()
+#print(kkk)
+
+bayes_result = gnb.fit(kkk, data_label).predict(kkk)
+
+print(bayes_result.shape)
+'''
+svmm = svm.SVC(kernel='rbf', gamma = 0.006, C=1)
 svmm.fit(kkk, data_label)
 ##**********************************a partir de aqui predict con mi audio***************************########
 #a1 = libwav.read('/home/tvlenin/Desktop/1_Lenin_0.wav',mmap=False)[1]
@@ -110,12 +118,14 @@ for i in range(0,290,10):
 #y_pred = svmm.fit(kkk, data_label).predict(kkk[73].reshape(1,-1))
 
 for i in range (29):
-    y_pred = svmm.fit(kkk, data_label).predict(kk[i].reshape(1,-1))
-    print(y_pred)
-    
-    print(kk[i])
+	y_pred = svmm.fit(kkk, data_label).predict(kk[i].reshape(1,-1))
+	print(y_pred)
+	print(kk[i])
 
-
-
+#y_pred = svmm.fit(kkk, data_label).predict(kkk[150].reshape(1,-1))
+#print(y_pred)
+#y_pred = svmm.fit(kkk, data_label).predict(kkk[300].reshape(1,-1))
+#print(y_pred)
 
 print("Bye")
+'''
