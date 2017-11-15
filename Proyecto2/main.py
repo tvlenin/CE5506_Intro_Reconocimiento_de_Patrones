@@ -15,9 +15,9 @@ np.random.seed(42)
 
 #---------------variables---------------
 #Samples for each FFT
-FFT_length = 64 #for each size
+FFT_length = 128 #for each size
 FFT_size = 64
-n_digits = 30 #For kmeans
+n_digits = 15 #For kmeans
 
 # 150 samples for each number, from three different people
 #dataset[0-1499] -> 150 1's -> 150 2's -> ..... -> 150 9's
@@ -41,7 +41,7 @@ print("Aplying FFT...")
 
 #K means clustering
 print("Aplying K means")
-#clf = KMeans(init='k-means++', n_clusters=n_digits, n_init=10).fit(fft_data)
+clf = KMeans(init='k-means++', n_clusters=n_digits, n_init=10).fit(fft_data)
 
 
 # now you can save it to a file
@@ -49,8 +49,8 @@ print("Aplying K means")
 #    pickle.dump(clf, f)
 
 # and later you can load it
-with open('kmeans.pkl', 'rb') as f:
-    clf = pickle.load(f)
+#with open('kmeans.pkl', 'rb') as f:
+#    clf = pickle.load(f)
 actual = 0
 cont = 0
 kkk = []
@@ -67,10 +67,10 @@ data_label = np.array(data_label)
 print(kkk.shape)
 print(data_label.shape)
 
-svmm = svm.SVC(kernel='rbf', gamma = 10)
+svmm = svm.SVC(kernel='rbf', gamma = 0.01)
 svmm.fit(kkk, data_label)
 ##**********************************a partir de aqui predict con mi audio***************************########
-a1 = libwav.read('/home/tvlenin/Desktop/1_Lenin_0.wav',mmap=False)[1]
+#a1 = libwav.read('/home/tvlenin/Desktop/1_Lenin_0.wav',mmap=False)[1]
 #print(a1.shape)
 #a1 = preprocessing.normalize(a1.reshape(-1,1), norm='l2')
 #print(a1.shape)
@@ -90,7 +90,7 @@ for data_set in test_dataset:
 #print("************************************************************************************************")
 #print(testAudio_total[1])
 
-for i in range(290):
+for i in range(0,290,10):
     #print(clf.predict(fft_data[actual:actual+i]))
     b = np.zeros(160)
     #testAudio_test = np.array(testAudio[i])
@@ -109,9 +109,12 @@ for i in range(290):
 
 #y_pred = svmm.fit(kkk, data_label).predict(kkk[73].reshape(1,-1))
 
-#for i in range (290):
-	#y_pred = svmm.fit(kkk, data_label).predict(kk[i].reshape(1,-1))
-	#print(y_pred)
+for i in range (29):
+    y_pred = svmm.fit(kkk, data_label).predict(kk[i].reshape(1,-1))
+    print(y_pred)
+    
+    print(kk[i])
+
 
 
 
