@@ -21,8 +21,8 @@ n_digits = 12 #For kmeans
 graphics = False #Show plots with True
 naive_bayes_acceptance = 0.1 # 0-1, this % from the maximum is deleted in naive bayes, 0 does nothing
 normalize_param = False
-svm_gamma = 0.01
-svm_nu = 0.1
+svm_gamma = 0.03
+svm_nu = 0.05
 
 # 150 samples for each number, from three different people
 #dataset[0-1499] -> 150 1's -> 150 2's -> ..... -> 150 9's
@@ -55,7 +55,7 @@ print("\t Elapsed time: %d"%(time.time() - start))
 sys.stdout.write("Aplying K means...")
 sys.stdout.flush()
 start = time.time()
-clf = KMeans(init='k-means++', n_clusters=n_digits, n_init=10).fit(fft_data)
+#clf = KMeans(init='k-means++', n_clusters=n_digits, n_init=10).fit(fft_data)
 
 #Plot the k-means information
 func.plot_k_means(fft_data,n_digits,graphics)
@@ -67,8 +67,8 @@ print("\t Elapsed time: %d"%(time.time() - start))
 #    pickle.dump(clf, f)
 
 # and later you can load it
-#with open('kmeans.pkl', 'rb') as f:
-#    clf = pickle.load(f)
+with open('kmeans.pkl', 'rb') as f:
+    clf = pickle.load(f)
 
 sys.stdout.write("Aplying Naive Bayes...")
 sys.stdout.flush()
@@ -98,8 +98,7 @@ sys.stdout.write("Aplying Support Vector Machine...")
 sys.stdout.flush()
 start = time.time()
 #svmm = svm.SVC(kernel='rbf', gamma = 50, C=10)
-svmm = svm.NuSVC(kernel='rbf', gamma = svm_gamma ,nu = svm_nu)
-svmm.fit(kkk, data_label)
+#svmm.fit(kkk, data_label)
 
 ##**********************************a partir de aqui predict con mi audio***************************########
 kk = []
@@ -135,9 +134,11 @@ for i in range (1200):
 '''
 print("\t Elapsed time: %d"%(time.time() - start))
 kk = np.array(kk)
-model =svmm.fit(kkk, data_label)
-print(model.score(kkk,data_label))
-print(model.score(kk,data_label1))
+for i in range(10):
+    svmm = svm.NuSVC(kernel='rbf', gamma = svm_gamma ,nu = svm_nu)
+    model =svmm.fit(kkk, data_label)
+    print(model.score(kkk,data_label))
+    print(model.score(kk,data_label1))
 #print("Error: %d "%(100-100*conta/290))
 #print("Error: %d "%(100-100*conta/1200))
 print("Bye")
