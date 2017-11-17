@@ -17,13 +17,13 @@ np.random.seed(42)
 
 #---------------variables---------------
 #Samples for each FFT
-FFT_length = 32 #for each size
-n_digits = 12 #For kmeans
+FFT_length = 64 #for each size
+n_digits = 15 #For kmeans
 graphics = False #Show plots with True
 naive_bayes_acceptance = 0 # 0-1, this % from the maximum is deleted in naive bayes, 0 does nothing
-normalize_param = False
-svm_gamma = 0.01
-svm_nu = 0.11
+normalize_param = True
+svm_gamma = 100 #no bajar, meter sesgo
+svm_nu = 0.75
 svm_c = 40
 
 # 150 samples for each number, from three different people
@@ -57,7 +57,7 @@ print("\t Elapsed time: %d"%(time.time() - start))
 sys.stdout.write("Aplying K means...")
 sys.stdout.flush()
 start = time.time()
-clf = KMeans(init='k-means++', n_clusters=n_digits, n_init=10).fit(fft_data)
+#clf = KMeans(init='k-means++', n_clusters=n_digits, n_init=10).fit(fft_data)
 
 #Plot the k-means information
 func.plot_k_means(fft_data,n_digits,graphics)
@@ -69,8 +69,8 @@ print("\t Elapsed time: %d"%(time.time() - start))
 #    pickle.dump(clf, f)
 
 # and later you can load it
-#with open('kmeans.pkl', 'rb') as f:
-#    clf = pickle.load(f)
+with open('kmeans.pkl', 'rb') as f:
+    clf = pickle.load(f)
 
 sys.stdout.write("Aplying Naive Bayes...")
 sys.stdout.flush()
@@ -88,8 +88,8 @@ data_label = np.array(data_label)
 #Normalize the vectors
 kkk = func.normalize_naive_bayes(kkk,normalize_param)
 #for i in range(0,len(kkk)-1,1):
-#    scaler = StandardScaler()
-#    scaler.fit(kkk[i].reshape(1,-1))
+#scaler = StandardScaler()
+#kkk = scaler.fit(kkk)
 #    kkk[i] = scaler.transform(kkk[i])
 
 func.plot_some_naive_bayes(kkk,graphics,n_digits)
@@ -123,7 +123,9 @@ for i in range(290):
     kk.append(b)
     #print(clf.predict(testAudio_total[i]))
 
+
 kk = func.normalize_naive_bayes(kk,normalize_param)
+#kk = scaler.fit(kk)
 
 conta = 0
 conta1 = 0
@@ -139,7 +141,7 @@ for i in range (1200):
 '''
 print("\t Elapsed time: %d"%(time.time() - start))
 kk = np.array(kk)
-model =svmm.fit(kkk, data_label)
+model = svmm.fit(kkk, data_label)
 print(model.score(kkk,data_label))
 print(model.score(kk,data_label1))
 
@@ -147,3 +149,4 @@ os.system('play --no-show-progress --null --channels 1 synth %s sine %f' % (0.3,
 
 
 
+print("Bye")
