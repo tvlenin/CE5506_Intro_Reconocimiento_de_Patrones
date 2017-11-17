@@ -21,7 +21,7 @@ n_digits = 12 #For kmeans
 graphics = False #Show plots with True
 naive_bayes_acceptance = 0.1 # 0-1, this % from the maximum is deleted in naive bayes, 0 does nothing
 normalize_param = False
-svm_gamma = 0.1
+svm_gamma = 0.01
 svm_nu = 0.1
 
 # 150 samples for each number, from three different people

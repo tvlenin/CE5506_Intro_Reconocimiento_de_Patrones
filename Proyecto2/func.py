@@ -30,9 +30,11 @@ def fixed_size_fft(FFT_length, dataset, plot):
     data_label = []
     for data_set in dataset:
         data_size += [(data_set[1].shape[0]-1)/FFT_length]
+
         data_label += [data_set[0]]
         for i in range(FFT_length, data_set[1].shape[0]-1, FFT_length):
             a= np.absolute(np.fft.fft([data_set[1][(i-FFT_length):(i+FFT_length)]]))[0]
+            cont += 1
             if(cont == 0 and plot==True):
                 cont +=1
                 plt.figure(1)
@@ -49,6 +51,9 @@ def fixed_size_fft(FFT_length, dataset, plot):
                 plt.show()
 
             data_fft += [a[0:FFT_length]]
+
+
+
     return data_fft, data_size, data_label
 
 
