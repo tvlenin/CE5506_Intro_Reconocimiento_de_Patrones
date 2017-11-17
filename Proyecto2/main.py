@@ -1,3 +1,4 @@
+import os
 import sys
 import func
 import time
@@ -16,13 +17,14 @@ np.random.seed(42)
 
 #---------------variables---------------
 #Samples for each FFT
-FFT_length = 64 #for each size
+FFT_length = 32 #for each size
 n_digits = 12 #For kmeans
 graphics = False #Show plots with True
-naive_bayes_acceptance = 0.1 # 0-1, this % from the maximum is deleted in naive bayes, 0 does nothing
+naive_bayes_acceptance = 0 # 0-1, this % from the maximum is deleted in naive bayes, 0 does nothing
 normalize_param = False
-svm_gamma = 0.1
-svm_nu = 0.1
+svm_gamma = 0.01
+svm_nu = 0.11
+svm_c = 40
 
 # 150 samples for each number, from three different people
 #dataset[0-1499] -> 150 1's -> 150 2's -> ..... -> 150 9's
@@ -97,7 +99,7 @@ print("\t Elapsed time: %d"%(time.time() - start))
 sys.stdout.write("Aplying Support Vector Machine...")
 sys.stdout.flush()
 start = time.time()
-#svmm = svm.SVC(kernel='rbf', gamma = 50, C=10)
+#svmm = svm.SVC(kernel='rbf', gamma = svm_gamma, C=svm_c)
 svmm = svm.NuSVC(kernel='rbf', gamma = svm_gamma ,nu = svm_nu)
 svmm.fit(kkk, data_label)
 
@@ -121,6 +123,8 @@ for i in range(290):
     kk.append(b)
     #print(clf.predict(testAudio_total[i]))
 
+kk = func.normalize_naive_bayes(kk,normalize_param)
+
 conta = 0
 conta1 = 0
 '''
@@ -138,6 +142,8 @@ kk = np.array(kk)
 model =svmm.fit(kkk, data_label)
 print(model.score(kkk,data_label))
 print(model.score(kk,data_label1))
-#print("Error: %d "%(100-100*conta/290))
-#print("Error: %d "%(100-100*conta/1200))
-print("Bye")
+
+os.system('play --no-show-progress --null --channels 1 synth %s sine %f' % (0.3, model.score(kkk,data_label)*1000))
+
+
+
