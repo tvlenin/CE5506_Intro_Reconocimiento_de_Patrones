@@ -1,3 +1,10 @@
+'''
+Normalizacon por la suma distribucion(todo debe quedar entre 0 - 1)
+Volver a ver gamma y nu
+
+
+'''
+
 import sys
 import func
 import time
@@ -17,11 +24,11 @@ np.random.seed(42)
 #---------------variables---------------
 #Samples for each FFT
 FFT_length = 64 #for each size
-n_digits = 12 #For kmeans
+n_digits = 15 #For kmeans
 graphics = False #Show plots with True
-naive_bayes_acceptance = 0.1 # 0-1, this % from the maximum is deleted in naive bayes, 0 does nothing
+naive_bayes_acceptance = 0 # 0-1, this % from the maximum is deleted in naive bayes, 0 does nothing
 normalize_param = False
-svm_gamma = 0.03
+svm_gamma = 1
 svm_nu = 0.05
 
 # 150 samples for each number, from three different people
@@ -55,10 +62,11 @@ print("\t Elapsed time: %d"%(time.time() - start))
 sys.stdout.write("Aplying K means...")
 sys.stdout.flush()
 start = time.time()
+#kkk = func.normalize_naive_bayes(kkk,normalize_param)
 #clf = KMeans(init='k-means++', n_clusters=n_digits, n_init=10).fit(fft_data)
 
 #Plot the k-means information
-func.plot_k_means(fft_data,n_digits,graphics)
+#func.plot_k_means(fft_data,n_digits,graphics)
 
 print("\t Elapsed time: %d"%(time.time() - start))
 
@@ -84,7 +92,7 @@ kkk = np.array(kkk)
 data_label = np.array(data_label)
 
 #Normalize the vectors
-kkk = func.normalize_naive_bayes(kkk,normalize_param)
+#kkk = func.normalize_naive_bayes(kkk,normalize_param)
 #for i in range(0,len(kkk)-1,1):
 #    scaler = StandardScaler()
 #    scaler.fit(kkk[i].reshape(1,-1))
@@ -134,11 +142,28 @@ for i in range (1200):
 '''
 print("\t Elapsed time: %d"%(time.time() - start))
 kk = np.array(kk)
-for i in range(10):
-    svmm = svm.NuSVC(kernel='rbf', gamma = svm_gamma ,nu = svm_nu)
-    model =svmm.fit(kkk, data_label)
-    print(model.score(kkk,data_label))
-    print(model.score(kk,data_label1))
+svmm = svm.NuSVC(kernel='rbf', gamma = svm_gamma ,nu = svm_nu)
+model =svmm.fit(kkk, data_label)
+print(kk[0])
+print(kk[1])
+print(kk[2])
+print(kkk[0])
+print(kkk[1])
+print(kkk[2])
+print(model.score(kkk,data_label))
+print(model.score(kk,data_label1))
+
+'''
+for i in range(100):
+    for j in range(200):
+        svmm = svm.NuSVC(kernel='rbf', gamma = (svm_gamma+i*0.001) ,nu = (svm_nu+j*0.0001))
+        model =svmm.fit(kkk, data_label)
+        if(model.score(kk,data_label1) > 0.17):
+            print( svm_gamma+i*0.001)
+            print( svm_nu+j*0.00001)
+            print(model.score(kkk,data_label))
+            print(model.score(kk,data_label1))
+'''
 #print("Error: %d "%(100-100*conta/290))
 #print("Error: %d "%(100-100*conta/1200))
 print("Bye")
