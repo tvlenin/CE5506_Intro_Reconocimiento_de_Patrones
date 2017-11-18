@@ -29,7 +29,7 @@ def fixed_size_fft(FFT_length, dataset, plot):
     data_size = []
     data_label = []
     for data_set in dataset:
-        data_size += [(data_set[1].shape[0]-1)/FFT_length]
+        data_size += [(data_set[1].shape[0])/FFT_length]
 
         data_label += [data_set[0]]
         for i in range(FFT_length, data_set[1].shape[0]-1, FFT_length):
@@ -113,10 +113,10 @@ def normalize_naive_bayes(kkk, normalize_param):
             u=np.sum(kkk[i])/len(kkk)
             for j in range(0,len(kkk[i])-1,1):
                 if(kkk[i][j]>nmax):
-                    nmax=kkk[i][j]
+                    nmax = kkk[i][j]
             for j in range(0,len(kkk[i])-1,1):
-                kkk[i][j]= kkk[i][j]/nmax
-                kkk[i][j]= kkk[i][j]-u
+                kkk[i][j] = kkk[i][j]/(np.sum(kkk[i]))
+                kkk[i][j] = kkk[i][j]-u
             nmax=0
     return kkk
 
