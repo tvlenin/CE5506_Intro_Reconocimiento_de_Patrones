@@ -30,7 +30,7 @@ def fixed_size_fft(FFT_length, dataset, plot):
     data_size = []
     data_label = []
     for data_set in dataset:
-        data_size += [(data_set[1].shape[0]-1)/FFT_length]
+        data_size += [(data_set[1].shape[0])/FFT_length]
 
         data_label += [data_set[0]]
         for i in range(FFT_length, data_set[1].shape[0]-1, FFT_length):
@@ -116,7 +116,6 @@ def fit(kkk):
         nsum = np.sum(kkk[i])
         for j in range(0,len(kkk[0]),1):
             kkk[i][j] = kkk[i][j]/nsum
-        nsum=0
         u = np.sum([u,kkk[i]],axis=0)
     for i in range(0,len(u),1):
         u[i] = u[i]/len(kkk)

@@ -1,4 +1,11 @@
-import os
+'''
+Normalizacon por la suma distribucion(todo debe quedar entre 0 - 1)
+Volver a ver gamma y nu
+
+comparar las normalizaciones entre los dos datos
+
+'''
+
 import sys
 import func
 import time
@@ -38,11 +45,12 @@ with open('dataset.dat', 'rb') as data:
 train_dataset = []
 test_dataset = []
 for i in range(0,1351,150):
-	for j in range(0,120):
-		train_dataset.append(dataset[i+j])
+    for j in range(50,150):
+        train_dataset.append(dataset[i+j])
+
 for i in range(0,1351,150):
-	for j in range(120,149):
-		test_dataset.append(dataset[i+j])
+    for j in range(49,100):
+        test_dataset.append(dataset[i+j])
 
 print("\t Elapsed time: %d"%(time.time() - start))
 
@@ -51,6 +59,7 @@ sys.stdout.write("Aplying FFT...")
 sys.stdout.flush()
 start = time.time()
 [fft_data, audios_size, data_label] = func.fixed_size_fft(FFT_length, train_dataset, graphics)
+[fft_data1, audios_size1, data_label1] = func.fixed_size_fft(FFT_length, test_dataset, graphics)
 print("\t Elapsed time: %d"%(time.time() - start))
 
 #K means clustering
@@ -59,11 +68,7 @@ sys.stdout.flush()
 start = time.time()
 #clf = KMeans(init='k-means++', n_clusters=n_digits, n_init=10).fit(fft_data)
 
-#Plot the k-means information
-func.plot_k_means(fft_data,n_digits,graphics)
-
 print("\t Elapsed time: %d"%(time.time() - start))
-
 # now you can save it to a file
 #with open('kmeans.pkl', 'wb') as f:
 #    pickle.dump(clf, f)
@@ -78,74 +83,43 @@ start = time.time()
 actual = 0
 cont = 0
 kkk = []
+kk = []
+
 for i in audios_size:
     b = func.bayes_predict(n_digits,clf.predict(fft_data[actual:actual+i]),naive_bayes_acceptance)
     kkk.append(b)
     actual = i
+actual = 0
+for i in audios_size1:
+    b = func.bayes_predict(n_digits,clf.predict(fft_data1[actual:actual+i]),naive_bayes_acceptance)
+    kk.append(b)
+    actual = i
 kkk = np.array(kkk)
+kk = np.array(kk)
 data_label = np.array(data_label)
 
 #Normalize the vectors
-#func.fit(kkk) #This function performs everything, for new data use func.fit_data(kk)
-scaler = StandardScaler()
-#kkk = scaler.fit(kkk)
+func.fit(kkk) #This function performs everything, for new data use func.fit_data(kk)
 
-
+data_label1 = np.array(data_label1)
 func.plot_some_naive_bayes(kkk,graphics,n_digits)
-
 print("\t Elapsed time: %d"%(time.time() - start))
 
 sys.stdout.write("Aplying Support Vector Machine...")
 sys.stdout.flush()
 start = time.time()
-#svmm = svm.SVC(kernel='rbf', gamma = svm_gamma, C=svm_c)
-svmm = svm.NuSVC(kernel='rbf', gamma = svm_gamma ,nu = svm_nu)
-svmm.fit(kkk, data_label)
 
 ##**********************************a partir de aqui predict con mi audio***************************########
-kk = []
-testAudio_total = []
-testAudio = []
-data_size1 = []
-data_label1 = []
+func.fit_data(kk)
 
-for data_set in test_dataset:
-    testAudio = []
-    data_size1 += [(data_set[1].shape[0]-1)/FFT_length]
-    data_label1 += [data_set[0]]
-    for i in range(FFT_length, data_set[1].shape[0]-1, FFT_length):
-    	testAudio += [np.absolute(np.fft.fft([data_set[1][(i-FFT_length):(i+FFT_length)]]))[0][0:FFT_length]]
-    testAudio_total += [testAudio]
-
-for i in range(290):
-    b = func.bayes_predict(n_digits,clf.predict(testAudio_total[i]),naive_bayes_acceptance)
-    kk.append(b)
-    #print(clf.predict(testAudio_total[i]))
-
-
-#kk = func.fit_data(kk)
-#kk = scaler.fit(kk)
-
-conta = 0
-conta1 = 0
-'''
-for i in range (290):
-    y_pred = svmm.fit(kkk, data_label).predict(kk[i].reshape(1,-1))
-    if(y_pred[0] == data_label1[i]):
-        conta += 1
-for i in range (1200):
-    y_pred = svmm.fit(kkk, data_label).predict(kkk[i].reshape(1,-1))
-    if(y_pred[0] == data_label[i]):
-        conta1 += 1
-'''
 print("\t Elapsed time: %d"%(time.time() - start))
-kk = np.array(kk)
-model = svmm.fit(kkk, data_label)
+svmm = svm.NuSVC(kernel='rbf', gamma = svm_gamma ,nu = svm_nu)
+model =svmm.fit(kkk, data_label)
 print(model.score(kkk,data_label))
 print(model.score(kk,data_label1))
-
-os.system('play --no-show-progress --null --channels 1 synth %s sine %f' % (0.3, model.score(kkk,data_label)*1000))
-
-
-
 print("Bye")
+
+
+
+
+
