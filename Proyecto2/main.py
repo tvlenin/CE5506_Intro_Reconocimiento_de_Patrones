@@ -11,9 +11,10 @@ from sklearn import metrics
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import normalize
 from sklearn.svm import NuSVC
 
-np.random.seed(42)
+#np.random.seed(42)
 
 #---------------variables---------------
 #Samples for each FFT
@@ -21,7 +22,6 @@ FFT_length = 64 #for each size
 n_digits = 15 #For kmeans
 graphics = False #Show plots with True
 naive_bayes_acceptance = 0 # 0-1, this % from the maximum is deleted in naive bayes, 0 does nothing
-normalize_param = True
 svm_gamma = 100 #no bajar, meter sesgo
 svm_nu = 0.75
 svm_c = 40
@@ -86,11 +86,10 @@ kkk = np.array(kkk)
 data_label = np.array(data_label)
 
 #Normalize the vectors
-kkk = func.normalize_naive_bayes(kkk,normalize_param)
-#for i in range(0,len(kkk)-1,1):
-#scaler = StandardScaler()
+#func.fit(kkk) #This function performs everything, for new data use func.fit_data(kk)
+scaler = StandardScaler()
 #kkk = scaler.fit(kkk)
-#    kkk[i] = scaler.transform(kkk[i])
+
 
 func.plot_some_naive_bayes(kkk,graphics,n_digits)
 
@@ -124,7 +123,7 @@ for i in range(290):
     #print(clf.predict(testAudio_total[i]))
 
 
-kk = func.normalize_naive_bayes(kk,normalize_param)
+#kk = func.fit_data(kk)
 #kk = scaler.fit(kk)
 
 conta = 0

@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.decomposition import PCA
 from sklearn.cluster import KMeans
+import math
 
 
 def extend_zeros(data):
@@ -91,36 +92,51 @@ def plot_k_means(fft_data,n_digits, graphics):
         plt.title('K-means clustering on the digits dataset\n'
           'Centroids are marked with white cross')
 
-
+'''
+Function to count how many numbers of the class appear
+'''
 def bayes_predict(n_class, array, naive_bayes_acceptance):
     ans=np.zeros(n_class)
     max_num=0
-    for i in range(0,len(array)-1,1):
+    for i in range(0,len(array),1):
         ans[int(array[i])] += 1
         if(ans[int(array[i])]>max_num):
             max_num=ans[int(array[i])]
-    for i in range(0,len(ans)-1,1):
+    for i in range(0,len(ans),1):
         if(abs(ans[i])<(max_num*naive_bayes_acceptance)):
             ans[i]=0
     return ans
 
-
-def normalize_naive_bayes(kkk, normalize_param):
-    if(normalize_param==True):
-        u=0
-        nmax=0
-        for i in range(0,len(kkk)-1,1):
-            u=np.sum(kkk[i])/len(kkk)
-            for j in range(0,len(kkk[i])-1,1):
-                if(kkk[i][j]>nmax):
-                    nmax = kkk[i][j]
-            for j in range(0,len(kkk[i])-1,1):
-                kkk[i][j] = kkk[i][j]/(np.sum(kkk[i]))
-                kkk[i][j] = kkk[i][j]-u
-            nmax=0
+global u
+def fit(kkk):
+    global u
+    nsum = 0.0
+    u = [0.0]*len(kkk[0])
+    for i in range(0,len(kkk),1):
+        nsum = np.sum(kkk[i])
+        for j in range(0,len(kkk[0]),1):
+            kkk[i][j] = kkk[i][j]/nsum
+        nsum=0
+        u = np.sum([u,kkk[i]],axis=0)
+    for i in range(0,len(u),1):
+        u[i] = u[i]/len(kkk)
+    for i in range(0,len(kkk),1):
+        kkk[i] = np.subtract(kkk[i],u)
     return kkk
 
+def fit_data(kkk):
+    global u
+    nsum = 0.0
+    for i in range(0,len(kkk),1):
+        nsum = np.sum(kkk[i])
+        for j in range(0,len(kkk[0]),1):
+            kkk[i][j] = kkk[i][j]/nsum
+            #print(kkk[i][j])
+            #if(math.isnan(kkk[i][j])):
+                #print("ole")
+        kkk[i] = np.subtract(kkk[i],u)
 
+    
 def plot_some_naive_bayes(kkk,graphics,n_digits):
     if(graphics==True):
         x = np.arange(n_digits)
