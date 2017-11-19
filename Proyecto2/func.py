@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from sklearn.decomposition import PCA
 from sklearn.cluster import KMeans
 import math
+import sys
 
 
 def extend_zeros(data):
@@ -36,7 +37,7 @@ def fixed_size_fft(FFT_length, dataset, plot):
         for i in range(FFT_length, data_set[1].shape[0]-1, FFT_length):
             a= np.absolute(np.fft.fft([data_set[1][(i-FFT_length):(i+FFT_length)]]))[0]
             cont += 1
-            if(cont == 0 and plot==True):
+            if(cont == 1 and plot==True):
                 cont +=1
                 plt.figure(1)
                 plt.plot(np.absolute(([data_set[1][(i-FFT_length):(i+FFT_length)]]))[0])
@@ -50,47 +51,8 @@ def fixed_size_fft(FFT_length, dataset, plot):
                 plt.xlabel('f')
                 plt.title('FFT')
                 plt.show()
-
             data_fft += [a[0:FFT_length]]
-
-
-
     return data_fft, data_size, data_label
-
-
-def standart_size_fft(number_FFTs, dataset):
-    data=[]
-    data_fft=[]
-    #Work for each audio, which contains [label, audio]
-    for data_item in dataset:
-        samples_per_FFT = data_item[1].shape[0]/number_FFTs
-        for i in range(0, data_item[1].shape[0]-1, samples_per_FFT):
-            data_fft += [np.absolute(np.fft.fft(data_item[1][(i):(i+samples_per_FFT-1)]))]
-        data+=[data_fft] # Without [data_item[0] can't concatenate it for kmeans
-        data_fft=[]
-
-    return data
-
-
-def plot_k_means(fft_data,n_digits, graphics):
-    if(graphics==True):
-        h = .01
-        reduced_data = PCA(2).fit_transform(fft_data)
-        clf_reduced = KMeans(init='k-means++', n_clusters=n_digits, n_init=10).fit(reduced_data)
-        pca_centroids = clf_reduced.cluster_centers_
-        x_min, x_max = pca_centroids[:, 0].min() - 1, pca_centroids[:, 0].max() + 1
-        y_min, y_max = pca_centroids[:, 1].min() - 1, pca_centroids[:, 1].max() + 1
-        xx, yy = np.meshgrid(np.arange(x_min, x_max, h), np.arange(y_min, y_max, h))
-        Z = clf_reduced.predict(np.c_[xx.ravel(), yy.ravel()])
-        Z = Z.reshape(xx.shape)
-        plt.figure(3)
-        plt.clf()
-        plt.imshow(Z, interpolation='nearest', extent=(xx.min(), xx.max(), yy.min(), yy.max()), cmap=plt.cm.Paired,aspect='auto', origin='lower')
-        plt.plot(pca_centroids[:, 0], pca_centroids[:, 1], 'k.', markersize=2)
-        plt.scatter(pca_centroids[:, 0], pca_centroids[:, 1], marker='x', s=169, linewidths=3, color='w', zorder=10)
-        plt.show()
-        plt.title('K-means clustering on the digits dataset\n'
-          'Centroids are marked with white cross')
 
 '''
 Function to count how many numbers of the class appear
@@ -113,9 +75,9 @@ def fit(kkk):
     nsum = 0.0
     u = [0.0]*len(kkk[0])
     for i in range(0,len(kkk),1):
-        nsum = np.sum(kkk[i])
-        for j in range(0,len(kkk[0]),1):
-            kkk[i][j] = kkk[i][j]/nsum
+        #nsum = np.sum(kkk[i])
+        #for j in range(0,len(kkk[0]),1):
+            #kkk[i][j] = kkk[i][j]/nsum
         u = np.sum([u,kkk[i]],axis=0)
     for i in range(0,len(u),1):
         u[i] = u[i]/len(kkk)
@@ -127,15 +89,73 @@ def fit_data(kkk):
     global u
     nsum = 0.0
     for i in range(0,len(kkk),1):
-        nsum = np.sum(kkk[i])
-        for j in range(0,len(kkk[0]),1):
-            kkk[i][j] = kkk[i][j]/nsum
-            #print(kkk[i][j])
-            #if(math.isnan(kkk[i][j])):
-                #print("ole")
+        #nsum = np.sum(kkk[i])
+        #for j in range(0,len(kkk[0]),1):
+            #kkk[i][j] = kkk[i][j]/nsum
         kkk[i] = np.subtract(kkk[i],u)
 
-    
+#------------------------------------------------------------------Graphics-------------------------------------------------------------------#
+
+def plot_sound(train_dataset, test_dataset, graphics):
+    if(graphics==True):
+        plt.title("Training data")
+        for item in train_dataset:
+            print(item)
+            plt.plot(item[1])
+            plt.show()
+            a = raw_input()
+            if(a == 'k'):
+                break
+        plt.title("New data")
+        for item in test_dataset:
+            print(item)
+            plt.plot(item[1])
+            plt.show()
+            a = raw_input()
+            if(a == 'k'):
+                break
+
+def plot_k_means(fft_data,n_digits, graphics):
+    if(graphics==True):
+        h = .01
+        reduced_data = PCA(2).fit_transform(fft_data)
+        clf_reduced = KMeans(init='k-means++', n_clusters=n_digits, n_init=10).fit(reduced_data)
+        pca_centroids = clf_reduced.cluster_centers_
+        x_min, x_max = pca_centroids[:, 0].min() - 1, pca_centroids[:, 0].max() + 1
+        y_min, y_max = pca_centroids[:, 1].min() - 1, pca_centroids[:, 1].max() + 1
+        xx, yy = np.meshgrid(np.arange(x_min, x_max, h), np.arange(y_min, y_max, h))
+        Z = clf_reduced.predict(np.c_[xx.ravel(), yy.ravel()])
+        Z = Z.reshape(xx.shape)
+        plt.figure(3)
+        plt.clf()
+        plt.imshow(Z, interpolation='nearest', extent=(xx.min(), xx.max(), yy.min(), yy.max()), cmap=plt.cm.Paired,aspect='auto', origin='lower')
+        plt.plot(pca_centroids[:, 0], pca_centroids[:, 1], 'k.', markersize=2)
+        plt.scatter(pca_centroids[:, 0], pca_centroids[:, 1], marker='x', s=169, linewidths=3, color='w', zorder=10)
+        plt.show()
+        plt.title('K-means clustering on the digits dataset\n'
+          'Centroids are marked with white cross')
+        
+def plot_k_means(fft_data,n_digits, graphics):
+    if(graphics==True):
+        h = .01
+        reduced_data = PCA(2).fit_transform(fft_data)
+        clf_reduced = KMeans(init='k-means++', n_clusters=n_digits, n_init=10).fit(reduced_data)
+        pca_centroids = clf_reduced.cluster_centers_
+        x_min, x_max = pca_centroids[:, 0].min() - 1, pca_centroids[:, 0].max() + 1
+        y_min, y_max = pca_centroids[:, 1].min() - 1, pca_centroids[:, 1].max() + 1
+        xx, yy = np.meshgrid(np.arange(x_min, x_max, h), np.arange(y_min, y_max, h))
+        Z = clf_reduced.predict(np.c_[xx.ravel(), yy.ravel()])
+        Z = Z.reshape(xx.shape)
+        plt.figure(3)
+        plt.clf()
+        plt.imshow(Z, interpolation='nearest', extent=(xx.min(), xx.max(), yy.min(), yy.max()), cmap=plt.cm.Paired,aspect='auto', origin='lower')
+        plt.plot(pca_centroids[:, 0], pca_centroids[:, 1], 'k.', markersize=2)
+        plt.scatter(pca_centroids[:, 0], pca_centroids[:, 1], marker='x', s=169, linewidths=3, color='w', zorder=10)
+        plt.show()
+        plt.title('K-means clustering on the digits dataset\n'
+          'Centroids are marked with white cross')
+        
+        
 def plot_some_naive_bayes(kkk,graphics,n_digits):
     if(graphics==True):
         x = np.arange(n_digits)
@@ -143,3 +163,8 @@ def plot_some_naive_bayes(kkk,graphics,n_digits):
         plt.xticks(x, list(range(n_digits)));
         plt.title("Naive Bayes one vector histogram")
         plt.show()
+
+#------------------------------------------------------------------Others-------------------------------------------------------------------#
+def write(msg):
+    sys.stdout.write(msg)
+    sys.stdout.flush()

@@ -5,7 +5,6 @@ Volver a ver gamma y nu
 comparar las normalizaciones entre los dos datos
 
 '''
-
 import sys
 import func
 import time
@@ -25,13 +24,12 @@ from sklearn.svm import NuSVC
 
 #---------------variables---------------
 #Samples for each FFT
-FFT_length = 64 #for each size
-n_digits = 15 #For kmeans
+FFT_length = 32 #for each size
+n_digits = 16 #For kmeans
 graphics = False #Show plots with True
 naive_bayes_acceptance = 0 # 0-1, this % from the maximum is deleted in naive bayes, 0 does nothing
-svm_gamma = 100 #no bajar, meter sesgo
+svm_gamma = 1 #no bajar, meter sesgo
 svm_nu = 0.75
-svm_c = 40
 
 # 150 samples for each number, from three different people
 #dataset[0-1499] -> 150 1's -> 150 2's -> ..... -> 150 9's
@@ -44,12 +42,12 @@ with open('dataset.dat', 'rb') as data:
 
 train_dataset = []
 test_dataset = []
-for i in range(0,1351,150):
-    for j in range(50,150):
+for i in range(0,1351,150):#for i in range(0,1351,150):
+    for j in range(1,150):
         train_dataset.append(dataset[i+j])
 
 for i in range(0,1351,150):
-    for j in range(49,100):
+    for j in range(0,1):
         test_dataset.append(dataset[i+j])
 
 print("\t Elapsed time: %d"%(time.time() - start))
@@ -66,12 +64,12 @@ print("\t Elapsed time: %d"%(time.time() - start))
 sys.stdout.write("Aplying K means...")
 sys.stdout.flush()
 start = time.time()
-#clf = KMeans(init='k-means++', n_clusters=n_digits, n_init=10).fit(fft_data)
+clf = KMeans(init='k-means++', n_clusters=n_digits, n_init=10).fit(fft_data)
 
-print("\t Elapsed time: %d"%(time.time() - start))
+print("%dk\t Elapsed time: %d"%(n_digits,(time.time() - start)))
 # now you can save it to a file
-#with open('kmeans.pkl', 'wb') as f:
-#    pickle.dump(clf, f)
+with open('kmeans.pkl', 'wb') as f:
+    pickle.dump(clf, f)
 
 # and later you can load it
 with open('kmeans.pkl', 'rb') as f:
@@ -97,12 +95,33 @@ for i in audios_size1:
 kkk = np.array(kkk)
 kk = np.array(kk)
 data_label = np.array(data_label)
+data_label1 = np.array(data_label1)
 
 #Normalize the vectors
 func.fit(kkk) #This function performs everything, for new data use func.fit_data(kk)
+func.fit_data(kk)
 
-data_label1 = np.array(data_label1)
-func.plot_some_naive_bayes(kkk,graphics,n_digits)
+#plt.figure(1)
+#for i in range(0,999,20):
+#    plt.stem(kkk[i])
+#plt.show()
+#plt.clf()
+
+#plt.figure(2)
+#for i in range(0,499,20):
+#    plt.stem(kk[i])
+#plt.show()
+#plt.clf()
+
+
+'''
+kk1 = []
+kk2 = []
+for i in range(kkk.shape[0]):
+    kk1 += [kkk[5:20]]
+for i in range(kk.shape[0]):
+    kk2 += [kk[5:20]]
+'''
 print("\t Elapsed time: %d"%(time.time() - start))
 
 sys.stdout.write("Aplying Support Vector Machine...")
@@ -110,16 +129,15 @@ sys.stdout.flush()
 start = time.time()
 
 ##**********************************a partir de aqui predict con mi audio***************************########
-func.fit_data(kk)
+#func.fit_data(kk)
 
 print("\t Elapsed time: %d"%(time.time() - start))
 svmm = svm.NuSVC(kernel='rbf', gamma = svm_gamma ,nu = svm_nu)
 model =svmm.fit(kkk, data_label)
 print(model.score(kkk,data_label))
 print(model.score(kk,data_label1))
-print("Bye")
-
-
+#for i in range(300):
+#    print(model.predict(kk[i].reshape(1,-1)))
 
 
 
