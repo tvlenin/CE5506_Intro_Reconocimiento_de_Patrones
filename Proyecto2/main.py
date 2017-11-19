@@ -55,6 +55,7 @@ with open('my_dataset2.pickle', 'rb') as data:
 train_dataset = []
 test_dataset = []
 #separate the data in train and test sets
+#In the data there are all the 0s first, then all the ones ...
 for i in range(0,1351,150):
     for j in range(50,150):
         train_dataset.append(dataset[i+j])
